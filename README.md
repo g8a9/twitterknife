@@ -16,7 +16,7 @@ We support processing the tweet jsonl files extracted from client libraries such
 ## Getting Started
 
 
-```bash
+```python
 import twitterknife.twitterknife as tkf
 
 tweets = tkf.parse_jsonl("tweets.json")
@@ -28,6 +28,12 @@ tweet_info = [t for t in tweet_info if t["has_data"]]
 # clean texts
 proc_texts = tkf.clean_texts((t["tweet_text"] for t in tweet_info if t["has_data"]))
 ```
+
+## Features
+
+We currently support:
+
+- cleaning the text (strip accents, substitute user handles and urls with placeholders)
 
 
 Credits
