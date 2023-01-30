@@ -1,14 +1,16 @@
 """Module with helper function to extract information from text."""
 
 import pandas as pd
+from beartype import beartype
 from beartype.typing import List, Optional
-from mlxtend.frequent_patterns import fpgrowth
+from mlxtend.frequent_patterns import association_rules, fpgrowth
 from mlxtend.preprocessing import TransactionEncoder
 from nltk.tokenize import TweetTokenizer
 
 FPGROWTH_ARGS = {"min_support": 0.6, "max_len": None}
 
 
+@beartype
 def frequent_word_sets(
     texts: List[str],
     preserve_case: Optional[bool] = False,
@@ -38,3 +40,14 @@ def frequent_word_sets(
     frequent_items = fpgrowth(df, **algo_args, use_colnames=True)
 
     return frequent_items
+
+
+@beartype
+def association_rules_mining(
+    frequent_word_sets: pd.DataFrame,
+    metric: Optional[str] = "confidence",
+    min_threshold: Optional[float] = 0.7,
+):
+    return association_rules(
+        frequent_word_sets, metric=metric, min_threshold=min_threshold
+    )
