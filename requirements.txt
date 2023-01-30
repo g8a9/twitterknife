@@ -2,3 +2,5 @@ beartype
 ftfy
 tqdm
 twarc
+nltk
+pandas

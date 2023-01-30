@@ -33,7 +33,10 @@ proc_texts = tkf.clean_texts((t["tweet_text"] for t in tweet_info if t["has_data
 
 We currently support:
 
+- tweet parsing
 - cleaning the text (strip accents, substitute user handles and urls with placeholders)
+- frequent word sets mining (fp growth)
+- association rules mininig
 
 
 Credits

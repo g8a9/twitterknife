@@ -4,10 +4,10 @@
 
 
 import unittest
+
 from click.testing import CliRunner
 
-from twitterknife import twitterknife
-from twitterknife import cli
+from twitterknife import cli, processing
 
 
 class TestTwitterknife(unittest.TestCase):
@@ -27,7 +27,7 @@ class TestTwitterknife(unittest.TestCase):
         runner = CliRunner()
         result = runner.invoke(cli.main)
         assert result.exit_code == 0
-        assert 'twitterknife.cli.main' in result.output
-        help_result = runner.invoke(cli.main, ['--help'])
+        assert "twitterknife.cli.main" in result.output
+        help_result = runner.invoke(cli.main, ["--help"])
         assert help_result.exit_code == 0
-        assert '--help  Show this message and exit.' in help_result.output
+        assert "--help  Show this message and exit." in help_result.output

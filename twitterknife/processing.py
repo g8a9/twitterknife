@@ -1,11 +1,11 @@
 """Main module."""
 import json
+import string
 import unicodedata
-from typing import Generator, Union
 
 import ftfy
 from beartype import beartype
-from beartype.typing import List
+from beartype.typing import Generator, List, Union
 from tqdm import tqdm
 
 
@@ -56,6 +56,8 @@ def clean_texts(
     clean_ftfy: bool = True,
     strip_new_lines: bool = True,
     strip_accents: bool = True,
+    strip_punctuation: bool = False,
+    keep_symbols: List[str] = ["@", "#", "<", ">"],
     strip_user_handles: bool = True,
     user_placeholder: str = "<user>",
     strip_urls: bool = True,
@@ -90,7 +92,18 @@ def clean_texts(
 
             new_text.append(t)
 
-        new_texts.append(" ".join(new_text))
+        new_text = " ".join(new_text)
+
+        if strip_punctuation:
+            target = list(string.punctuation)
+            if keep_symbols:
+                for symbol in keep_symbols:
+                    target.pop(target.index(symbol))
+            target = "".join(target)
+
+            new_text = new_text.translate(str.maketrans("", "", target))
+
+        new_texts.append(new_text)
 
     return new_texts
 
