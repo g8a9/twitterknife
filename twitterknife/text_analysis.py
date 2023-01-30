@@ -3,6 +3,7 @@
 import pandas as pd
 from beartype import beartype
 from beartype.typing import List, Optional
+from contextualized_topic_models.models.kitty_classifier import Kitty
 from mlxtend.frequent_patterns import association_rules, fpgrowth
 from mlxtend.preprocessing import TransactionEncoder
 from nltk.tokenize import TweetTokenizer
@@ -51,3 +52,25 @@ def association_rules_mining(
     return association_rules(
         frequent_word_sets, metric=metric, min_threshold=min_threshold
     )
+
+
+def find_topics(
+    texts: List[str],
+    embedding_model: Optional[str] = "paraphrase-multilingual-mpnet-base-v2",
+    contextual_size: Optional[int] = 768,
+    n_topics: Optional[int] = 5,
+    epochs: Optional[int] = 5,
+    stopwords: Optional[List[str]] = None,
+):
+    kt = Kitty()
+    kt.train(
+        texts,
+        topics=n_topics,
+        embedding_model=embedding_model,
+        contextual_size=contextual_size,
+        epochs=epochs,
+        stopwords_list=stopwords,
+    )
+
+    print(kt.pretty_print_word_classes())
+    return kt

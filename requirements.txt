@@ -4,3 +4,4 @@ tqdm
 twarc
 nltk
 pandas
+contextualized_topic_models

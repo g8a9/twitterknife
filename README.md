@@ -63,8 +63,9 @@ We currently support:
 
 - tweet parsing
 - cleaning the text (strip accents, user handles and urls normalization, etc.)
-- frequent word sets mining (we use FPGrowth)
+- frequent word sets mining (through FPGrowth from [mlxtend](https://github.com/rasbt/mlxtend))
 - association rules mininig
+- topic detection (through [CTM](https://github.com/MilaNLProc/contextualized-topic-models))
 
 
 Credits
