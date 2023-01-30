@@ -29,6 +29,26 @@ tweet_info = [t for t in tweet_info if t["has_data"]]
 proc_texts = tkf.clean_texts((t["tweet_text"] for t in tweet_info if t["has_data"]))
 ```
 
+### Text Mining
+
+Frequent Word Sets Mining
+
+```python
+with open("stopwords.txt") as fp:
+    stopwords = [l.strip() for l in fp.readlines()]
+
+# clean texts first
+texts = tkf.clean_texts(raw_texts, strip_user_handles=False, strip_punctuation=True)
+
+# FP Growth Mining
+frequent_word_sets = tkf.frequent_word_sets(
+    texts,
+    stopwords=stopwords,
+    fpgrowth_args={"min_support": 0.005, "max_len": 10}
+)   
+```
+
+
 ## Features
 
 We currently support:
