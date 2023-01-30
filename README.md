@@ -13,8 +13,17 @@ We support processing the tweet jsonl files extracted from client libraries such
 <!-- -   Free software: MIT license -->
 <!-- -   Documentation: <https://twitterknife.readthedocs.io>. -->
 
-## Getting Started
+## Features
 
+We currently support:
+
+- tweet parsing
+- cleaning the text (strip accents, user handles and urls normalization, etc.)
+- frequent word sets mining (through FPGrowth from [mlxtend](https://github.com/rasbt/mlxtend))
+- association rules mininig
+- topic detection (through [CTM](https://github.com/MilaNLProc/contextualized-topic-models))
+
+## Basic Preprocessing
 
 ```python
 import twitterknife.twitterknife as tkf
@@ -56,16 +65,11 @@ ass_rules = tkf.association_rules_mining(
 )
 ```
 
+### Topic Discovery
 
-## Features
-
-We currently support:
-
-- tweet parsing
-- cleaning the text (strip accents, user handles and urls normalization, etc.)
-- frequent word sets mining (through FPGrowth from [mlxtend](https://github.com/rasbt/mlxtend))
-- association rules mininig
-- topic detection (through [CTM](https://github.com/MilaNLProc/contextualized-topic-models))
+```python
+kt = tkf.find_topics(texts, n_topics=5, stopwords=stopwords)
+```
 
 
 Credits
