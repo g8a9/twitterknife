@@ -1,28 +1,64 @@
 """Main module."""
 import json
-import os
-from typing import List
+import unicodedata
+from typing import Generator, Union
 
 import ftfy
 from beartype import beartype
+from beartype.typing import List
 from tqdm import tqdm
-from twarc.client2 import Twarc2
 
 
 @beartype
-def parse_jsonl(path: str) -> dict:
+def parse_jsonl(path: str):
     with open(path) as fp:
         tweets = [json.loads(f.strip()) for f in fp.readlines()]
     return tweets
 
 
 @beartype
-def clean_text(
-    texts: List[str],
+def get_base_info(tweets: List[dict], show_progress: bool = True):
+    tweet_info = list()
+
+    for t in tqdm(tweets, disable=not show_progress):
+        if "data" not in t:
+            tweet_id = None
+            tweet_text = None
+            tweet_proc_text = None
+            author_id = None
+            created_at = None
+            lang = None
+            has_data = False
+        else:
+            tweet_id = t["data"]["id"]
+            tweet_text = t["data"]["text"]
+            author_id = t["data"]["author_id"]
+            created_at = t["data"]["created_at"]
+            lang = t["data"]["lang"]
+            has_data = True
+
+        tweet_info.append(
+            dict(
+                tweet_id=tweet_id,
+                tweet_text=tweet_text,
+                author_id=author_id,
+                created_at=created_at,
+                lang=lang,
+                has_data=has_data,
+            )
+        )
+    return tweet_info
+
+
+@beartype
+def clean_texts(
+    texts: Union[List[str], Generator],
     clean_ftfy: bool = True,
+    strip_new_lines: bool = True,
+    strip_accents: bool = True,
     strip_user_handles: bool = True,
     user_placeholder: str = "<user>",
-    strip_urls: bool = False,
+    strip_urls: bool = True,
     url_placeholder: str = "<url>",
     show_progress: bool = True,
 ):
@@ -30,9 +66,19 @@ def clean_text(
     for text in tqdm(texts, desc="Cleaning:", disable=not show_progress):
 
         if clean_ftfy:
-            text - ftfy.fix_text(text)
+            text = ftfy.fix_text(text)
 
-        texts = text.replace("\n", " ").replace("\r", " ").replace("\t", " ")
+        if strip_new_lines:
+            text = text.replace("\n", " ").replace("\r", " ").replace("\t", " ")
+
+        if strip_accents:
+            text = "".join(
+                (
+                    c
+                    for c in unicodedata.normalize("NFD", text)
+                    if unicodedata.category(c) != "Mn"
+                )
+            )
 
         new_text = []
         for t in text.split():
@@ -51,32 +97,4 @@ def clean_text(
 
 @beartype
 def retrieve_context(tweet_ids):
-    pass
-
-
-class Hopper:
-    def __init__(self):
-        self.twarc = Twarc2(bearer_token=os.environ["BEARER_TOKEN"])
-
-    def extract_hop(self, tweet_ids: pd.Series):
-        non_na = tweet_ids.loc[~tweet_ids.isna()]
-
-        lookups = self.twarc.tweet_lookup(
-            non_na.values, expansions=["referenced_tweets.id"]
-        )
-
-        new_data = list()
-        for lup in lookups:
-            for t in lup["data"]:
-                new_data.append(
-                    {
-                        "id": t["id"],
-                        "text": ftfy.fix_text(
-                            t["text"].replace("\n", " ")
-                        ),  # text of the next hop
-                        "next_hop_id": get_hop_id(t),  # tweet id of the next next hop
-                    }
-                )
-
-        hop_df = pd.DataFrame(new_data).set_index("id").drop_duplicates()
-        return hop_df
+    raise NotImplementedError()
