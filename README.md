@@ -23,7 +23,15 @@ We currently support:
 - association rules mininig
 - topic detection (through [CTM](https://github.com/MilaNLProc/contextualized-topic-models))
 
-## Basic Preprocessing
+## Installation
+
+```bash
+pip install git+https://github.com/g8a9/twitterknife.git
+```
+
+## Getting Started
+
+### Preprocessing
 
 ```python
 import twitterknife.twitterknife as tkf
